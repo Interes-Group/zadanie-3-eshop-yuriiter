@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 
 @Service
@@ -24,15 +25,12 @@ public class ProductService {
         return l;
     }
 
-    public Product getById(Long id) {
-        return this.repository.findAll().stream().filter(x -> x.getId().equals(id))
-                .findAny()
-                .orElse(null);
+    public Optional<Product> getById(Long id) {
+        return this.repository.findById(id);
     }
 
     public Product create(Product product) {
-        this.repository.save(product);
-        return product;
+        return this.repository.save(product);
     }
 
     public Product addProductAmount(Long id, int amount) {

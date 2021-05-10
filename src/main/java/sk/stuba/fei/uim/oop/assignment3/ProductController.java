@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ProductController {
@@ -18,13 +19,18 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public Product getProductById(@PathVariable(name = "id") String id) {
-        return this.service.getById(Long.valueOf(id));
+    public Optional<Product> getProductById(@PathVariable(name = "id") Long id) {
+        return this.service.getById(id);
     }
 
     @GetMapping("/product/{id}/amount")
-    public int getProductAmount(@PathVariable(name = "id") String id) {
-        return this.service.getById(Long.valueOf(id)).getAmount();
+    public int getProductAmount(@PathVariable(name = "id") Long id) {
+        Product product = this.service.getById(id).get();
+        int amount = 0;
+        if(product != null) {
+            amount = product.getAmount();
+        }
+        return amount;
     }
 
     @PostMapping("/product")
@@ -33,18 +39,18 @@ public class ProductController {
     }
 
     @PostMapping("/product/{id}/amount")
-    public Product addProductAmount(@PathVariable(name = "id") String id, @RequestBody int amount) {
-        return this.service.addProductAmount(Long.valueOf(id), amount);
+    public Product addProductAmount(@PathVariable(name = "id") Long id, @RequestBody int amount) {
+        return this.service.addProductAmount(id, amount);
     }
 
     @PutMapping("/product/{id}")
-    public Product updateProduct(@PathVariable(name = "id") String id, @RequestBody Product product) {
-        return this.service.update(Long.valueOf(id), product);
+    public Product updateProduct(@PathVariable(name = "id") Long id, @RequestBody Product product) {
+        return this.service.update(id, product);
     }
 
     @DeleteMapping("/product/{id}")
-    public void deleteProduct(@PathVariable(name = "id") String id) {
-        this.service.delete(Long.valueOf(id));
+    public void deleteProduct(@PathVariable(name = "id") Long id) {
+        this.service.delete(id);
     }
 
 
