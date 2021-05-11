@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.oop.assignment3.container.AmountContainer;
 import sk.stuba.fei.uim.oop.assignment3.entity.Product;
+import sk.stuba.fei.uim.oop.assignment3.request.ProductRequest;
+import sk.stuba.fei.uim.oop.assignment3.response.ProductResponse;
 import sk.stuba.fei.uim.oop.assignment3.service.ProductService;
 
 import java.util.List;
@@ -24,12 +26,12 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable(name = "id") Long id) {
         Optional<Product> opt = this.service.getById(id);
         if(opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(opt.get(), HttpStatus.OK);
+        return new ResponseEntity<>(new ProductResponse(opt.get()), HttpStatus.OK);
     }
 
     @GetMapping("/product/{id}/amount")
@@ -43,13 +45,13 @@ public class ProductController {
     }
 
     @PostMapping("/product")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        return new ResponseEntity<>(this.service.create(product), HttpStatus.CREATED);
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest request) {
+        return new ResponseEntity<>(new ProductResponse(this.service.create(request)), HttpStatus.CREATED);
     }
 
     @PostMapping("/product/{id}/amount")
-    public ResponseEntity<AmountContainer> addProductAmount(@PathVariable(name = "id") Long id, @RequestBody AmountContainer amountRequest) {
-        int amount = amountRequest.getAmount();
+    public ResponseEntity<AmountContainer> addProductAmount(@PathVariable(name = "id") Long id, @RequestBody AmountContainer amountContainer) {
+        int amount = amountContainer.getAmount();
         Product updated = this.service.addProductAmount(id, amount);
         if(updated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -58,12 +60,12 @@ public class ProductController {
     }
 
     @PutMapping("/product/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable(name = "id") Long id, @RequestBody Product product) {
-        Product updated = this.service.update(id, product);
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable(name = "id") Long id, @RequestBody ProductRequest request) {
+        Product updated = this.service.update(id, request);
         if(updated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        return new ResponseEntity<>(new ProductResponse(updated), HttpStatus.OK);
     }
 
     @DeleteMapping("/product/{id}")

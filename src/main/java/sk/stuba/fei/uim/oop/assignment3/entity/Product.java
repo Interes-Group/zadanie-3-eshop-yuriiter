@@ -1,6 +1,7 @@
 package sk.stuba.fei.uim.oop.assignment3.entity;
 
 import lombok.*;
+import sk.stuba.fei.uim.oop.assignment3.request.ProductRequest;
 
 import javax.persistence.*;
 
@@ -27,6 +28,15 @@ public class Product {
         this.unit = unit;
         this.price = price;
     }
+
+    public Product(ProductRequest request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+        this.amount = request.getAmount();
+        this.unit = request.getUnit();
+        this.price = request.getPrice();
+    }
+
 
 }
 

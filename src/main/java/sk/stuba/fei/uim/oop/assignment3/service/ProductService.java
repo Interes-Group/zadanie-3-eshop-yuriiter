@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.oop.assignment3.entity.Product;
 import sk.stuba.fei.uim.oop.assignment3.repository.ProductRepository;
+import sk.stuba.fei.uim.oop.assignment3.request.ProductRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +26,8 @@ public class ProductService {
         return this.repository.findById(id);
     }
 
-    public Product create(Product product) {
-        return this.repository.save(product);
+    public Product create(ProductRequest productRequest) {
+        return this.repository.save(new Product(productRequest));
     }
 
     public Product addProductAmount(Long id, int amount) {
@@ -40,7 +41,7 @@ public class ProductService {
         return repository.save(p);
     }
 
-    public Product update(Long id, Product product) {
+    public Product update(Long id, ProductRequest request) {
         Optional<Product> opt = this.repository.findById(id);
         if(opt.isEmpty()) {
             return null;
@@ -48,11 +49,11 @@ public class ProductService {
 
         Product p = opt.get();
 
-        String name = product.getName();
-        String description = product.getDescription();
-        String unit = product.getUnit();
-        Integer amount = product.getAmount();
-        Integer price = product.getPrice();
+        String name = request.getName();
+        String description = request.getDescription();
+        String unit = request.getUnit();
+        Integer amount = request.getAmount();
+        Integer price = request.getPrice();
 
         if(name != null)
             p.setName(name);
