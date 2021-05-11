@@ -18,22 +18,22 @@ public class CartController {
 
 
     @PostMapping("/cart")
-    public ResponseEntity<Cart> createCart() {
-        return new ResponseEntity<>(cartService.create(), HttpStatus.CREATED);
+    public ResponseEntity<CartResponse> createCart() {
+        return new ResponseEntity<>(new CartResponse(cartService.create()), HttpStatus.CREATED);
     }
 
     @GetMapping("/cart/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CartResponse> getCartById(@PathVariable(name = "id") Long id) {
         Optional opt = this.cartService.findById(id);
         if(opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Cart cart = (Cart) opt.get();
-        return new ResponseEntity<>(cart, HttpStatus.OK);
+        return new ResponseEntity<>(new CartResponse(cart), HttpStatus.OK);
     }
 
     @DeleteMapping("/cart/{id}")
-    public ResponseEntity<Cart> deleteById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CartResponse> deleteById(@PathVariable(name = "id") Long id) {
         if(this.cartService.deleteById(id)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -41,7 +41,7 @@ public class CartController {
     }
 
     @PostMapping("/cart/{id}/add")
-    public ResponseEntity<Cart> addToCart(@PathVariable(name = "id") Long cartId, @RequestBody ShoppingListItem item) {
+    public ResponseEntity<CartResponse> addToCart(@PathVariable(name = "id") Long cartId, @RequestBody ShoppingListItem item) {
         Optional<Product> optProduct = productService.getById(item.getProductId());
         Optional<Cart> optCart = cartService.findById(cartId);
 
@@ -60,7 +60,7 @@ public class CartController {
         }
         productService.addProductAmount(product.getId(), -1 * (item.getAmount()));
         cartService.addAmountToShoppingListItem(cartId, item);
-        return new ResponseEntity<>(cartService.findById(cartId).get(), HttpStatus.OK);
+        return new ResponseEntity<>(new CartResponse(cartService.findById(cartId).get()), HttpStatus.OK);
     }
 
     @GetMapping("/cart/{id}/pay")
