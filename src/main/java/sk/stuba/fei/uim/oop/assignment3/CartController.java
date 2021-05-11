@@ -2,12 +2,15 @@ package sk.stuba.fei.uim.oop.assignment3;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 @RestController
 public class CartController {
@@ -49,7 +52,7 @@ public class CartController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if(optCart.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Product product = optProduct.get();
@@ -64,26 +67,36 @@ public class CartController {
     }
 
     @GetMapping("/cart/{id}/pay")
-    public ResponseEntity<Integer> sumPay(@PathVariable(name = "id") Long id) {
-        Cart cart = cartService.findById(id).get();
-        if(cart == null) {
+    public ResponseEntity<String> sumPay(@PathVariable(name = "id") Long id) {
+
+        Optional<Cart> opt = cartService.findById(id);
+        if(opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Cart cart = opt.get();
         if(cart.isPayed()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
         List<ShoppingListItem> shoppingList = cart.getShoppingList();
         int sum = 0;
         for(ShoppingListItem item : shoppingList) {
             Long productId = item.getProductId();
-            Product product = productService.getById(productId).get();
-            if(product == null) {
+            Optional<Product> optProduct = productService.getById(productId);
+            if(optProduct.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+            Product product = optProduct.get();
             sum += (product.getPrice() * item.getAmount());
         }
 
-        return new ResponseEntity<>(sum, HttpStatus.OK);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(TEXT_PLAIN);
+
+//        System.out.println(sum);
+        cartService.payById(cart.getId());
+        return new ResponseEntity<>(String.valueOf(sum), httpHeaders, HttpStatus.OK);
     }
 
 }

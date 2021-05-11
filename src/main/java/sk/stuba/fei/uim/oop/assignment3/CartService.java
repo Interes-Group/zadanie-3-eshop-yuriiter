@@ -50,4 +50,17 @@ public class CartService {
         }
         return this.cartRepository.save(cart);
     }
+
+    public Cart payById(Long id) {
+        Optional<Cart> opt = cartRepository.findById(id);
+        if(opt.isEmpty()) {
+            return null;
+        }
+        Cart cart = opt.get();
+        if(cart.isPayed()) {
+            return null;
+        }
+        cart.setPayed(true);
+        return cartRepository.save(cart);
+    }
 }
