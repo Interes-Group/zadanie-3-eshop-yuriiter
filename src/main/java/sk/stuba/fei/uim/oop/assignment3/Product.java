@@ -2,23 +2,21 @@ package sk.stuba.fei.uim.oop.assignment3;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@SequenceGenerator(name = "product_sequence", initialValue = 1)
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "product_sequence")
     private Long id;
     private String name;
     private String description;
-    private int amount;
+    private Integer amount;
     private String unit;
-    private int price;
+    private Integer price;
 
     public Product() {}
 

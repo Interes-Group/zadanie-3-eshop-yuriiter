@@ -18,33 +18,49 @@ public class CartController {
 
 
     @PostMapping("/cart")
-    public Cart createCart(Cart cart) {
-        return this.cartService.create(cart);
+    public ResponseEntity<Cart> createCart() {
+        return new ResponseEntity<>(cartService.create(), HttpStatus.CREATED);
     }
 
     @GetMapping("/cart/{id}")
-    public Optional<Cart> getCartById(@PathVariable(name = "id") Long id) {
-        return this.cartService.findById(id);
+    public ResponseEntity<Cart> getCartById(@PathVariable(name = "id") Long id) {
+        Optional opt = this.cartService.findById(id);
+        if(opt.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Cart cart = (Cart) opt.get();
+        return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
     @DeleteMapping("/cart/{id}")
-    public void deleteById(@PathVariable(name = "id") Long id) {
-        this.cartService.deleteById(id);
+    public ResponseEntity<Cart> deleteById(@PathVariable(name = "id") Long id) {
+        if(this.cartService.deleteById(id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/cart/{id}/add")
     public ResponseEntity<Cart> addToCart(@PathVariable(name = "id") Long cartId, @RequestBody ShoppingListItem item) {
-        Product product = productService.getById(item.getProductId()).get();
-        Cart cart = cartService.findById(cartId).get();
-        if(product == null) {
-            return new ResponseEntity<Cart>(HttpStatus.NOT_FOUND);
+        Optional<Product> optProduct = productService.getById(item.getProductId());
+        Optional<Cart> optCart = cartService.findById(cartId);
+
+        if(optProduct.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        if(optCart.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Product product = optProduct.get();
+        Cart cart = optCart.get();
+
         if(cart.isPayed() || product.getAmount() < item.getAmount()) {
-            return new ResponseEntity<Cart>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         productService.addProductAmount(product.getId(), -1 * (item.getAmount()));
-        cartService.addShoppingListItem(cartId, item);
-        return new ResponseEntity<Cart>(cartService.findById(cartId).get(), HttpStatus.OK);
+        cartService.addAmountToShoppingListItem(cartId, item);
+        return new ResponseEntity<>(cartService.findById(cartId).get(), HttpStatus.OK);
     }
 
     @GetMapping("/cart/{id}/pay")

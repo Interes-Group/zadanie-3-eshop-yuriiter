@@ -10,13 +10,14 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@SequenceGenerator(name = "cart_sequence", initialValue = 1)
 public class Cart {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "cart_sequence")
     private Long id;
-    @OneToMany(targetEntity=ShoppingListItem.class, mappedBy="productId", fetch= FetchType.EAGER)
-    private List<ShoppingListItem> shoppingList;
-    private boolean payed = true;
+    @OneToMany(targetEntity = ShoppingListItem.class, mappedBy = "id", fetch = FetchType.LAZY)
+    private List<ShoppingListItem> shoppingList = new ArrayList<>();
+    private boolean payed = false;
 
     public Cart() {}
     public Cart(List<ShoppingListItem> shoppingList, boolean payed) {
@@ -27,6 +28,7 @@ public class Cart {
     public void addShoppingListItem(Long id, int amount) {
         this.shoppingList.add(new ShoppingListItem(id, amount));
     }
+
     public boolean removeShoppingListItem(Long id) {
         ShoppingListItem find = shoppingList.stream().filter(x -> x.getProductId().equals(id))
                 .findAny()
@@ -36,6 +38,7 @@ public class Cart {
         return true;
     }
     public ShoppingListItem findShoppingListItem(Long productId) {
+
         ShoppingListItem find = shoppingList.stream().filter(x -> x.getProductId().equals(productId))
                 .findAny()
                 .orElse(null);

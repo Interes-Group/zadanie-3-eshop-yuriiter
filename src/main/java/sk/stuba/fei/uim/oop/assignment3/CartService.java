@@ -8,38 +8,46 @@ import java.util.Optional;
 
 @Service
 public class CartService {
-    private CartRepository repository;
+    private CartRepository cartRepository;
+    private ShoppingListItemRepository shoppingListItemRepository;
 
     @Autowired
-    public CartService(CartRepository repository) {
-        this.repository = repository;
+    public CartService(CartRepository cartRepository, ShoppingListItemRepository shoppingListItemRepository) {
+        this.cartRepository = cartRepository;
+        this.shoppingListItemRepository = shoppingListItemRepository;
     }
 
-    public Cart create(Cart cart) {
-        return this.repository.save(cart);
+
+    public Cart create() {
+        return this.cartRepository.save(new Cart());
     }
 
     public Optional<Cart> findById(Long id) {
-        return this.repository.findById(id);
+        return this.cartRepository.findById(id);
     }
 
     public boolean deleteById(Long id) {
-        if (this.repository.existsById(id)) {
-            this.repository.deleteById(id);
+        if (this.cartRepository.existsById(id)) {
+            this.cartRepository.deleteById(id);
             return true;
         }
         return false;
     }
 
-    public Cart addShoppingListItem(Long cartId, ShoppingListItem item) {
-        Cart cart = this.repository.findById(cartId).get();
+    public Cart addAmountToShoppingListItem(Long cartId, ShoppingListItem item) {
+        Optional<Cart> opt = this.cartRepository.findById(cartId);
+        if(opt.isEmpty()) {
+            return null;
+        }
+        Cart cart = opt.get();
         ShoppingListItem inCartItem = cart.findShoppingListItem(item.getProductId());
         if(inCartItem != null) {
             inCartItem.setAmount(inCartItem.getAmount() + item.getAmount());
         }
         else {
+            this.shoppingListItemRepository.save(item);
             cart.addShoppingListItem(item);
         }
-        return this.repository.save(cart);
+        return this.cartRepository.save(cart);
     }
 }
