@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-    private ProductRepository repository;
+    private final ProductRepository repository;
 
     @Autowired
     public ProductService(ProductRepository repository) {
@@ -18,8 +18,7 @@ public class ProductService {
     }
 
     public List<Product> getAll() {
-        List<Product> l = this.repository.findAll();
-        return l;
+        return this.repository.findAll();
     }
 
     public Optional<Product> getById(Long id) {
@@ -42,12 +41,12 @@ public class ProductService {
     }
 
     public Product update(Long id, Product product) {
-        Optional opt = this.repository.findById(id);
+        Optional<Product> opt = this.repository.findById(id);
         if(opt.isEmpty()) {
             return null;
         }
 
-        Product p = (Product) opt.get();
+        Product p = opt.get();
 
         String name = product.getName();
         String description = product.getDescription();
@@ -70,11 +69,11 @@ public class ProductService {
     }
 
     public boolean delete(Long id) {
-        Optional opt = repository.findById(id);
+        Optional<Product> opt = repository.findById(id);
         if(opt.isEmpty()) {
             return false;
         }
-        this.repository.delete(((Product) opt.get()));
+        this.repository.delete((opt.get()));
         return true;
     }
 
