@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +6,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.oop.assignment3.entity.Cart;
+import sk.stuba.fei.uim.oop.assignment3.entity.Product;
+import sk.stuba.fei.uim.oop.assignment3.entity.ShoppingListItem;
+import sk.stuba.fei.uim.oop.assignment3.response.CartResponse;
+import sk.stuba.fei.uim.oop.assignment3.service.CartService;
+import sk.stuba.fei.uim.oop.assignment3.service.ProductService;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +33,11 @@ public class CartController {
 
     @GetMapping("/cart/{id}")
     public ResponseEntity<CartResponse> getCartById(@PathVariable(name = "id") Long id) {
-        Optional opt = this.cartService.findById(id);
+        Optional<Cart> opt = this.cartService.findById(id);
         if(opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Cart cart = (Cart) opt.get();
+        Cart cart = opt.get();
         return new ResponseEntity<>(new CartResponse(cart), HttpStatus.OK);
     }
 
@@ -63,7 +69,7 @@ public class CartController {
         }
         productService.addProductAmount(product.getId(), -1 * (item.getAmount()));
         cartService.addAmountToShoppingListItem(cartId, item);
-        return new ResponseEntity<>(new CartResponse(cartService.findById(cartId).get()), HttpStatus.OK);
+        return new ResponseEntity<>(new CartResponse(cart), HttpStatus.OK);
     }
 
     @GetMapping("/cart/{id}/pay")
@@ -94,7 +100,7 @@ public class CartController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(TEXT_PLAIN);
 
-//        System.out.println(sum);
+
         cartService.payById(cart.getId());
         return new ResponseEntity<>(String.valueOf(sum), httpHeaders, HttpStatus.OK);
     }

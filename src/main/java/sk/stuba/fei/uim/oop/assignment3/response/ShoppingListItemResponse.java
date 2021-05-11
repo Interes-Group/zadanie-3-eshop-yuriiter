@@ -1,10 +1,11 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.response;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sk.stuba.fei.uim.oop.assignment3.entity.ShoppingListItem;
 
 @Getter
 @Setter

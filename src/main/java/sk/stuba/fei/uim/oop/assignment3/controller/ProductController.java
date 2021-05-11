@@ -1,10 +1,13 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.oop.assignment3.request.AmountRequest;
+import sk.stuba.fei.uim.oop.assignment3.entity.Product;
+import sk.stuba.fei.uim.oop.assignment3.service.ProductService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,10 +33,10 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}/amount")
-    public ResponseEntity<AmountContainer> getProductAmount(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<AmountRequest> getProductAmount(@PathVariable(name = "id") Long id) {
         Optional opt = this.service.getById(id);
         if(opt.isPresent()) {
-            AmountContainer response = new AmountContainer(((Product) opt.get()).getAmount());
+            AmountRequest response = new AmountRequest(((Product) opt.get()).getAmount());
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -45,13 +48,13 @@ public class ProductController {
     }
 
     @PostMapping("/product/{id}/amount")
-    public ResponseEntity<AmountContainer> addProductAmount(@PathVariable(name = "id") Long id, @RequestBody AmountContainer amountContainer) {
-        int amount = amountContainer.getAmount();
+    public ResponseEntity<AmountRequest> addProductAmount(@PathVariable(name = "id") Long id, @RequestBody AmountRequest amountRequest) {
+        int amount = amountRequest.getAmount();
         Product updated = this.service.addProductAmount(id, amount);
         if(updated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new AmountContainer(updated.getAmount()), HttpStatus.OK);
+        return new ResponseEntity<>(new AmountRequest(updated.getAmount()), HttpStatus.OK);
     }
 
     @PutMapping("/product/{id}")

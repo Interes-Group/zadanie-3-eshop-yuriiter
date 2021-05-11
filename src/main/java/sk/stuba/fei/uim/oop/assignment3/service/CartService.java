@@ -1,8 +1,12 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sk.stuba.fei.uim.oop.assignment3.entity.Cart;
+import sk.stuba.fei.uim.oop.assignment3.entity.ShoppingListItem;
+import sk.stuba.fei.uim.oop.assignment3.repository.CartRepository;
+import sk.stuba.fei.uim.oop.assignment3.repository.ShoppingListItemRepository;
 
 import java.util.Optional;
 

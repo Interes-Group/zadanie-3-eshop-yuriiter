@@ -1,11 +1,12 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sk.stuba.fei.uim.oop.assignment3.entity.Product;
+import sk.stuba.fei.uim.oop.assignment3.repository.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 
 @Service
 public class ProductService {

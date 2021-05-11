@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@SequenceGenerator(name = "cart_sequence", initialValue = 1)
+@SequenceGenerator(name = "cart_sequence")
 public class Cart {
     @Id
     @GeneratedValue(generator = "cart_sequence")
@@ -38,11 +38,9 @@ public class Cart {
         return true;
     }
     public ShoppingListItem findShoppingListItem(Long productId) {
-
-        ShoppingListItem find = shoppingList.stream().filter(x -> x.getProductId().equals(productId))
+        return shoppingList.stream().filter(x -> x.getProductId().equals(productId))
                 .findAny()
                 .orElse(null);
-        return find;
     }
     public void addShoppingListItem(ShoppingListItem item) {
         this.shoppingList.add(item);

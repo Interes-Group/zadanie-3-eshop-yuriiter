@@ -1,9 +1,11 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sk.stuba.fei.uim.oop.assignment3.entity.Cart;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +25,7 @@ public class CartResponse {
         this.payed = cart.isPayed();
         this.shoppingList = cart.getShoppingList()
                 .stream()
-                .map(shoppingListItem -> new ShoppingListItemResponse(shoppingListItem))
+                .map(ShoppingListItemResponse::new)
                 .collect(Collectors.toList());
     }
 }

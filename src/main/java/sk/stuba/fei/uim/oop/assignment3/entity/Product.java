@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.oop.assignment3;
+package sk.stuba.fei.uim.oop.assignment3.entity;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@SequenceGenerator(name = "product_sequence", initialValue = 1)
+@SequenceGenerator(name = "product_sequence")
 public class Product {
     @Id
     @GeneratedValue(generator = "product_sequence")
@@ -27,6 +27,7 @@ public class Product {
         this.unit = unit;
         this.price = price;
     }
+
 }
 
 
